@@ -33,48 +33,55 @@ if data_uploader:
             continue
 
         #details
-        st.write("Dataframe Preview")
+        st.write("Here's a quick preview of your data:")
         st.dataframe(df.head())
+
         # data cleaning
-        st.subheader("Data cleaning types")
-        if st.checkbox(f"Clear from {file.name}"):
+        st.subheader("Data Cleaning Options")
+        if st.checkbox(f"Clean data from {file.name}?"):
             col1, col2 = st.columns(2)
 
             with col1:
-                if st.button(f"Remove duplicates for : {file.name}"):
+                if st.button(f"Remove duplicates in {file.name}"):
                     df.drop_duplicates(inplace=True)
-                    st.write("Removed")
+                    st.success("Duplicates removed!")
 
             with col2:
                 if st.button(f"Fill missing values in {file.name}"):
                     numeric_cols = df.select_dtypes(include=['number']).columns
                     df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
-                    st.write("Missing values filled")
+                    st.success("Missing values filled with column means.")
 
-        st.subheader("select columns to keep")
-        columns = st.multiselect(f"Choose columns in {file.name}",df.columns,default=df.colums)
+        st.subheader("Select Columns to Keep")
+        columns = st.multiselect(
+            f"Choose which columns to keep from {file.name}",
+            df.columns,
+            default=list(df.columns)
+        )
         df = df[columns]
 
         # visualization
-        st.subheader("Visualization of you data here")
-        if st.checkbox(f"Visualization from {file.name}"):
-            st.bar_chart(df.select_dtypes(include='numbers').iloc[:, :2])
+        st.subheader("Visualize Your Data")
+        if st.checkbox(f"Show bar chart for {file.name}"):
+            st.bar_chart(df.select_dtypes(include='number').iloc[:, :2])
 
         # conversion types
-
-        st.subheader("conversion types")
-        conversion_type = st.radio(f"Convert{file.name =} to:", ["Cvs","Excel"],key=file.name)
-        if st.button(f"Convert{file.name}"):
+        st.subheader("Download Your Data")
+        conversion_type = st.radio(
+            f"Convert {file.name} to:",
+            ["CSV", "Excel"],
+            key=file.name
+        )
+        if st.button(f"Convert {file.name}"):
             buffer = BytesIO()
             if conversion_type == "CSV":
-                df.to.csv(buffer, index= False)
+                df.to_csv(buffer, index=False)
                 file_name = file.name.replace(file_ext, ".csv")
                 mime_type = "text/csv"
-
             elif conversion_type == "Excel":
-                df.to.to_excel(buffer, index=False)
+                df.to_excel(buffer, index=False)
                 file_name = file.name.replace(file_ext, ".xlsx")
-                mime_type = "application/vnd.openxmlformats-officedocuments.spreadsheet.sheet"
+                mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             buffer.seek(0)
 
             st.download_button(
