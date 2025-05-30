@@ -90,7 +90,7 @@ if data_uploader:
                 file_name=file_name,
                 mime=mime_type
             )
-st.success("files processed successfully")
+    st.success("Files processed successfully")  # Moved inside the if-block so it only shows after files are processed
 
 
 
