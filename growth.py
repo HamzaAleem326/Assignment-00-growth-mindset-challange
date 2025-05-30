@@ -19,17 +19,17 @@ unsafe_allow_html=True
 st.title("Data Purifier")
 st.write("Purify your Data with Data Analysis, Automated Data Cleaning and Automated Data Preprocessing along with data visualization")
 # Data Uploader
-data_uploader = st.file_uploader("Upload you data in ecxel or csv format",type=["cvs","xlsx"],accept_multiple_files=(True))
+data_uploader = st.file_uploader("Upload you data in excel or csv format", type=["csv", "xlsx"], accept_multiple_files=True)  # Fixed typos: "ecxel"->"excel", "cvs"->"csv", removed extra parentheses
 if data_uploader:
     for file in data_uploader:
         file_ext = os.path.splitext(file.name)[-1].lower()
 
-        if file_ext == "csv":
+        if file_ext == ".csv":  # Added dot for correct extension
             df = pd.read_csv(file)
-        elif file_ext == "xlsx":
+        elif file_ext == ".xlsx":
             df = pd.read_excel(file)
         else: 
-            st.error(f"unsupplrted file type: {file_ext}")
+            st.error(f"unsupported file type: {file_ext}")  # Fixed typo: "unsupplrted"->"unsupported"
             continue
 
         #details
@@ -47,7 +47,7 @@ if data_uploader:
 
             with col2:
                 if st.button(f"Fill missing values in {file.name}"):
-                    numeric_cols = df.select_dtypes(includes=['number']).columns
+                    numeric_cols = df.select_dtypes(include=['number']).columns
                     df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
                     st.write("Missing values filled")
 
